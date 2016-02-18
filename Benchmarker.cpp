@@ -21,9 +21,11 @@ static int __init BenchmarkStart()
   unsigned cycles_low, cycles_high, cycles_low1, cycles_high1;
 
   printk(KERN_INFO, "Loading test module...\n");
-  preempt_disable(); /*we disable preemption on our CPU*/
-  raw_local_irq_save(flags); /*we disable hard interrupts on our CPU*/
-  /*at this stage we exclusively own the CPU*/
+  //Disable Premption on this CPU
+  preempt_disable();
+  //Disable hard interrupts
+  raw_local_irq_save(flags);
+  //Now we can get to work, we exclusively own the CPU
   asm volatile("CPUID\n\t"
   "RDTSC\n\t"
   "mov %%edx, %0\n\t"
@@ -32,8 +34,10 @@ static int __init BenchmarkStart()
   asm volatile("RDTSCP\n\t"
   "mov %%edx, %0\n\t"
   "mov %%eax, %1\n\t": "=r" (cycles_high1), "=r" (cycles_low1) :: "%rax", "%rbx", "%rcx", "%rdx");
-  raw_local_irq_restore(flags); /*we enable hard interrupts on our CPU*/
-  preempt_enable(); /*we enable preemption*/
+  //Enable hard interrupts
+  raw_local_irq_restore(flags);
+  //Enable preemption
+  preempt_enable();
   start = ( ((uint64_t)cycles_high << 32) | cycles_low );
   end = ( ((uint64_t)cycles_high1 << 32) | cycles_low1 );
   printk(KERN_INFO, "\n function execution time was %llu clock cycles", (end - start));

@@ -17,7 +17,7 @@ static int __init BenchmarkStart(void)
   uint64_t start, end;
   unsigned cycles_low, cycles_high, cycles_low1, cycles_high1;
 
-  printk(KERN_WARNING "Benchmarker: Loading test module...\n");
+  printk(KERN_WARNING "Benchmarker1: Loading test module.\n");
   //Disable Premption on this CPU
   preempt_disable();
   //Disable hard interrupts
@@ -37,13 +37,13 @@ static int __init BenchmarkStart(void)
   preempt_enable();
   start = ( ((uint64_t)cycles_high << 32) | cycles_low );
   end = ( ((uint64_t)cycles_high1 << 32) | cycles_low1 );
-  printk(KERN_WARNING "Benchmarker: function execution time was %llu clock cycles", (end - start));
+  printk(KERN_WARNING "Benchmarker1: function execution time was %llu clock cycles.", (end - start));
   return 0;
 }
 
 static void __exit BenchmarkEnd(void)
 {
-  printk(KERN_WARNING "Benchmarker: Module Execution Ended.");
+  printk(KERN_WARNING "Benchmarker1: Module Execution Ended.");
 }
 
 module_init(BenchmarkStart);

@@ -8,4 +8,4 @@ install:
 uninstall:
 	rmmod Benchmarker
 output:
-	dmesg | grep "Benchmarker:"
+	dmesg | grep "Benchmarker2"

@@ -3,7 +3,7 @@ Benchmarker is a Linux kernel module that helps you Benchmark pieces of code on 
 
 # Building Benchmarker
 Place the code you want to benchmark in the function `void inline MeasuredFunction();` and then execute the following in a terminal:
-```
+``` bash
 # Build the module
 $ make
 # Install the module

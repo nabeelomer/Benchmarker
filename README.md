@@ -1,5 +1,5 @@
 # Benchmarker
-Benchmarker is a Linux kernel module that helps you Benchmark pieces of code.
+Benchmarker is a Linux kernel module that helps you Benchmark pieces of code on Intel x86 and x86-64 CPUs.
 
 # Using Benchmarker
 Place the code you want to benchmark in the function `void inline MeasuredFunction();` and then build the module.

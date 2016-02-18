@@ -4,23 +4,20 @@
 #include <linux/hardirq.h>
 #include <linux/preempt.h>
 #include <linux/sched.h>
-
-void inline MeasuredFunction()
+void inline MeasuredFunction(void)
 {
-  __asm(
-    "movq $1, %RAX\n"
-    "movq $2, R2\n"
-    :::"%RAX","%RBX","%RCX","%RDX","%RSI","%RDI", "%R1", "%R2", "%R3"
-  );
+  int a = 0;
+  a++;
+  a++;
 }
 
-static int __init BenchmarkStart()
+static int __init BenchmarkStart(void)
 {
   unsigned long flags;
   uint64_t start, end;
   unsigned cycles_low, cycles_high, cycles_low1, cycles_high1;
 
-  printk(KERN_INFO, "Loading test module...\n");
+  printk(KERN_WARNING "Benchmarker: Loading test module...\n");
   //Disable Premption on this CPU
   preempt_disable();
   //Disable hard interrupts
@@ -40,13 +37,13 @@ static int __init BenchmarkStart()
   preempt_enable();
   start = ( ((uint64_t)cycles_high << 32) | cycles_low );
   end = ( ((uint64_t)cycles_high1 << 32) | cycles_low1 );
-  printk(KERN_INFO, "\n function execution time was %llu clock cycles", (end - start));
+  printk(KERN_WARNING "Benchmarker: function execution time was %llu clock cycles", (end - start));
   return 0;
 }
 
-static void __exit BenchmarkEnd()
+static void __exit BenchmarkEnd(void)
 {
-  printk(KERN_INFO, "Module Execution Ended.");
+  printk(KERN_WARNING "Benchmarker: Module Execution Ended.");
 }
 
 module_init(BenchmarkStart);

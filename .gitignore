@@ -1,4 +1,9 @@
-Makefile
 *.s
 *.o
 *.a
+*.mod.c
+*.symvers
+*.order
+*.cmd
+.tmp*
+*.ko

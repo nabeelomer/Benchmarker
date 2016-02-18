@@ -7,8 +7,11 @@
 
 void inline MeasuredFunction()
 {
-  int a = 0;
-  a++;
+  __asm(
+    "movq $1, %RAX\n"
+    "movq $2, R2\n"
+    :::"%RAX","%RBX","%RCX","%RDX","%RSI","%RDI", "%R1", "%R2", "%R3"
+  );
 }
 
 static int __init BenchmarkStart()

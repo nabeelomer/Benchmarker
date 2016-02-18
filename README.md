@@ -1,2 +1,2 @@
 # Benchmarker
-Linux kernel module that benchmarks code
+Benchmarker is a Linux kernel module that helps you Benchmark pieces of code.

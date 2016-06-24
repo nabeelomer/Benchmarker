@@ -4,46 +4,41 @@
 #include <linux/hardirq.h>
 #include <linux/preempt.h>
 #include <linux/sched.h>
-void inline MeasuredFunction(void)
+int inline MeasuredFunction(void)
 {
-  int a = 0;
-  a++;
-  a++;
+  return 88*66*98*76/9*77;
 }
 
 static int __init BenchmarkStart(void)
 {
-  unsigned long flags;
-  uint64_t start, end;
-  unsigned cycles_low, cycles_high, cycles_low1, cycles_high1;
-
-  printk(KERN_WARNING "Benchmarker1: Loading test module.\n");
-  //Disable Premption on this CPU
+  unsigned long InterruptFlags;
+  uint64_t StartVal, EndVal;
+  unsigned ClkCyclesLow, ClkCyclesHigh, ClkCyclesLow1, ClkCyclesHigh1;
   preempt_disable();
-  //Disable hard interrupts
-  raw_local_irq_save(flags);
-  //Now we can get to work, we exclusively own the CPU
+  raw_local_irq_save(InterruptFlags);
+
+  //Now we can get to work, we own the CPU
   asm volatile("CPUID\n\t"
   "RDTSC\n\t"
   "mov %%edx, %0\n\t"
-  "mov %%eax, %1\n\t": "=r" (cycles_high), "=r" (cycles_low) :: "%rax", "%rbx", "%rcx", "%rdx");
+  "mov %%eax, %1\n\t": "=r" (ClkCyclesHigh), "=r" (ClkCyclesLow) :: "%rax", "%rbx", "%rcx", "%rdx");
   MeasuredFunction();
   asm volatile("RDTSCP\n\t"
   "mov %%edx, %0\n\t"
-  "mov %%eax, %1\n\t": "=r" (cycles_high1), "=r" (cycles_low1) :: "%rax", "%rbx", "%rcx", "%rdx");
-  //Enable hard interrupts
-  raw_local_irq_restore(flags);
-  //Enable preemption
+  "mov %%eax, %1\n\t": "=r" (ClkCyclesHigh1), "=r" (ClkCyclesLow1) :: "%rax", "%rbx", "%rcx", "%rdx");
+
+  raw_local_irq_restore(InterruptFlags);
   preempt_enable();
-  start = ( ((uint64_t)cycles_high << 32) | cycles_low );
-  end = ( ((uint64_t)cycles_high1 << 32) | cycles_low1 );
-  printk(KERN_WARNING "Benchmarker1: function execution time was %llu clock cycles.", (end - start));
+  StartVal = ( ((uint64_t)ClkCyclesHigh << 32) | ClkCyclesLow );
+  EndVal = ( ((uint64_t)ClkCyclesHigh1 << 32) | ClkCyclesLow1 );
+  EndVal = (EndVal - StartVal);
+  printk(KERN_INFO "Benchmarker: Code Execution Time (in clock cycles): %lld\n", EndVal);
   return 0;
 }
 
 static void __exit BenchmarkEnd(void)
 {
-  printk(KERN_WARNING "Benchmarker1: Module Execution Ended.");
+  printk(KERN_INFO "Benchmarker: Module Execution Ended.\n");
 }
 
 module_init(BenchmarkStart);
